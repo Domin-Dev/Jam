@@ -8,6 +8,7 @@ TagManager:
   - Tail
   - Wall
   - Food
+  - None
   layers:
   - Default
   - TransparentFX

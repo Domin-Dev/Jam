@@ -9,6 +9,10 @@ public class Player : MonoBehaviour
 {
     Camera camera;
 
+
+    [SerializeField] private float currentHp;
+    [SerializeField] private float maxHp;
+    [Space(20)]
     [SerializeField] private float maxSprintTime;
     [SerializeField] private float currentSprintTime;
 
@@ -55,10 +59,11 @@ public class Player : MonoBehaviour
         Transform t = Instantiate(parts[0], Vector3.zero, Quaternion.identity).AddComponent<MarkerManager>().transform;
         sortingOrder = t.GetChild(0).GetComponent<SpriteRenderer>().sortingOrder;
         body.Add(t);
-        FindObjectOfType<Opponent>().player = t.gameObject;
-        currentSprintTime = maxSprintTime;
         currentSpeed = speed;
         currentDistance = distance;
+        isSprint = false;
+        currentSprintTime = maxSprintTime;
+        timer1 = 0;
     }
 
 
@@ -67,23 +72,50 @@ public class Player : MonoBehaviour
 
 
 
-
-  
+    bool isSprint;
+    [SerializeField]float timer1;
     private void Update()
     {
-    
+        if(isSprint)
+        {
+            currentSprintTime = currentSprintTime - Time.deltaTime;
+            UIManager.Instance.UpdateSprintBar(currentSprintTime / maxSprintTime);
+            if (currentSprintTime <= 0)
+            {
+                currentSpeed = speed;
+                isSprint = false;
+                timer1 = 1f;
+            }
+        }
+        else if(currentSprintTime <= maxSprintTime)
+        {
+            if (timer1 > 0)
+            {
+                timer1 = timer1 - Time.deltaTime;
+            }
+            else 
+            {
+                currentSprintTime = currentSprintTime + (Time.deltaTime);
+                UIManager.Instance.UpdateSprintBar(currentSprintTime / maxSprintTime);
+            }
+        }
 
-         
         if (Input.GetKeyDown(KeyCode.Space))
         {
-             currentSpeed = 1.4f * speed;
+            if (currentSprintTime > 0)
+            {
+                currentSpeed = 1.45f * speed;
+                isSprint = true;
+            }
             // currentDistance = 0.5f * distance;
-
         }
 
         if (Input.GetKeyUp(KeyCode.Space))
         {
+            
             currentSpeed = speed;
+            isSprint = false;
+            timer1 = 1f;
             //  currentDistance = distance;
         }
         // if(Input.GetAxis("Mouse X") != 0)
@@ -107,7 +139,7 @@ public class Player : MonoBehaviour
 
     public void LionHitTail()
     {
-      //  SceneManager.LoadScene(0);
+         SceneManager.LoadScene(0);
     }
 
     public void AddTail()
@@ -126,6 +158,7 @@ public class Player : MonoBehaviour
                 MarkerManager markerManager = body[body.Count - 1].GetComponent<MarkerManager>();
                 Transform t;
 
+             
 
                 if (body.Count > 1 && body[body.Count - 1].GetChild(0).GetComponent<Animator>() != null)
                 {
@@ -137,6 +170,8 @@ public class Player : MonoBehaviour
                 sortingOrder--;
                 t.GetChild(0).GetComponent<SpriteRenderer>().sortingOrder = sortingOrder;
 
+
+                if (body.Count == 1) t.transform.tag = "None";
 
                 t.AddComponent<MarkerManager>();
                 body.Add(t);

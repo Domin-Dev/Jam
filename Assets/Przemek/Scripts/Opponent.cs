@@ -1,11 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Opponent : MonoBehaviour
 {
 
-    public GameObject player;
+    public Transform target;
     public float speed = 2;
     public float thrustForce = 1;//Sila pchniecia rogodbody
     public float rotationSpeed = 2;
@@ -23,36 +24,51 @@ public class Opponent : MonoBehaviour
     public Vector3 forceDirection;
 
     // Update is called once per frame
+
+    private void FindTail()
+    {
+        float distance = float.MaxValue;
+        Transform target = transform;
+
+        GameObject[] objects = GameObject.FindGameObjectsWithTag("Tail");
+        for (int i = 0; i < objects.Length; i++)
+        {
+            float dist = Vector2.Distance(transform.position, objects[i].transform.position);
+            if (distance > dist)
+            {
+                distance = dist;
+                target = objects[i].transform;
+            }
+        }
+    }
+
+
     void Update()
     {
-        distance = Vector2.Distance(this.transform.position, player.transform.position);
-        Vector2 direction = player.transform.position - this.transform.position;
-        direction.Normalize();
 
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        if(distance < distanceBetween)
+        if (target != null)
         {
-            this.transform.position = Vector2.MoveTowards(this.transform.position, player.transform.position, speed * Time.deltaTime);
-            this.transform.position = Vector2.MoveTowards(this.transform.position, player.transform.position, speed * Time.deltaTime);
-            
-            //Vector2 inputDirection = new Vector2(horizontalInput, verticalInput).normalized;
-            //rigidbody.AddForce(forceDirection * thrustForce);
-            //Vector2 forwardDirection = new Vector2(Mathf.Cos(Mathf.Deg2Rad * rigidbody.rotation), Mathf.Sin(Mathf.Deg2Rad * rigidbody.rotation));
+            distance = Vector2.Distance(this.transform.position, target.position);
+            Vector2 direction = target.position - this.transform.position;
+            direction.Normalize();
 
-            // Zastosuj si³ê w kierunku znormalizowanego wektora zwi¹zane z obrotem gracza
-            //rigidbody.AddForce(transform.right * thrustForce); 
-            //rigidbody.AddForce(inputDirection * thrustForce);
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            if (distance < distanceBetween)
+            {
+                this.transform.position = Vector2.MoveTowards(this.transform.position, target.position, speed * Time.deltaTime);
 
+                //Vector2 inputDirection = new Vector2(horizontalInput, verticalInput).normalized;
+                //rigidbody.AddForce(forceDirection * thrustForce);
+                //Vector2 forwardDirection = new Vector2(Mathf.Cos(Mathf.Deg2Rad * rigidbody.rotation), Mathf.Sin(Mathf.Deg2Rad * rigidbody.rotation));
 
-            
-            Quaternion targetRotation = Quaternion.Euler(Vector3.forward * angle);
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+                // Zastosuj si³ê w kierunku znormalizowanego wektora zwi¹zane z obrotem gracza
+                //rigidbody.AddForce(transform.right * thrustForce); 
+                //rigidbody.AddForce(inputDirection * thrustForce);
 
+                Quaternion targetRotation = Quaternion.Euler(Vector3.forward * angle);
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
 
-        }
-        else
-        {
-            //rigidbody.velocity = Vector2.zero;
+            }
         }
     }
 }

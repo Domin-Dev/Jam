@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 
 public class ManTrigger : MonoBehaviour
@@ -10,7 +11,22 @@ public class ManTrigger : MonoBehaviour
     {
         if(collision.tag == "Lion")
         {
-            man.Ran(collision.transform);
+            if (!man.canAttack)
+            {
+                man.Ran(collision.transform);
+                man.Attack();
+            }
+        }
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if(collision.tag == "Tail")
+        {
+            if(man.canAttack)
+            {
+                man.Attack();
+            }
         }
     }
 

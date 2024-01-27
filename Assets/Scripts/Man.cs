@@ -5,8 +5,10 @@ using UnityEngine;
 public class Man : MonoBehaviour
 {
     [SerializeField] float speed;
+    [SerializeField] public bool canAttack;
     Rigidbody2D rigidbody2D;
     Transform lion;
+    Opponent opponent;
 
     Vector2 target;
 
@@ -16,6 +18,7 @@ public class Man : MonoBehaviour
         rigidbody2D = GetComponent<Rigidbody2D>();
         transform.GetChild(0).GetComponent<ManTrigger>().man = this;
         transform.GetChild(1).GetComponent<Trigger>().man = this;
+        if(canAttack) opponent = GetComponent<Opponent>();
     }
 
     bool ran;
@@ -63,6 +66,11 @@ public class Man : MonoBehaviour
         this.lion = lion;
         ran = true;
         target.x = 100000;
+    }
+
+    public void Attack()
+    {
+        opponent.
     }
 
     public void Safe()

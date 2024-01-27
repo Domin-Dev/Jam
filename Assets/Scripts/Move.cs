@@ -11,14 +11,16 @@ public class Move : MonoBehaviour
     [SerializeField] private float _speed2;
     [SerializeField] Vector2 direction;
     [SerializeField] Vector2 lastPostion;
-   // List<Transform> tail;
+    [SerializeField] bool canAttack;
+    // List<Transform> tail;
 
-
+    Opponent opponent;
 
     private void Start()
     {
         _camera = Camera.main.GetComponent<Camera>();
         _rb = GetComponent<Rigidbody2D>();
+        if(canAttack) opponent = GetComponent<Opponent>();
     }
 
 
