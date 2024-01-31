@@ -25,7 +25,7 @@ public class Opponent : MonoBehaviour
 
     // Update is called once per frame
 
-    private void FindTail()
+    public Transform FindTail()
     {
         float distance = float.MaxValue;
         Transform target = transform;
@@ -40,6 +40,8 @@ public class Opponent : MonoBehaviour
                 target = objects[i].transform;
             }
         }
+        this.target = target;
+        return target;
     }
 
 

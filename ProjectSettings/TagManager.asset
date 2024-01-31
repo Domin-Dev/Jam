@@ -9,6 +9,7 @@ TagManager:
   - Wall
   - Food
   - None
+  - Counter
   layers:
   - Default
   - TransparentFX

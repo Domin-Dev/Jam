@@ -9,9 +9,18 @@ public class Trigger : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.tag == "Wall" || collision.tag == "Food")
+        if(collision.tag == "Wall")// || collision.tag == "Food")
         {
             man.Wall();
+        }
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+       
+        if(collision.tag == "Tail"  && man.canAttack)
+        {      
+            man.Hiting();
         }
     }
 }

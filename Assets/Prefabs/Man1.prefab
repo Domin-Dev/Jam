@@ -92,7 +92,7 @@ Transform:
   m_GameObject: {fileID: 7321501536140284906}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -22.75, y: 1.34, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7321501535735459197}
@@ -176,7 +176,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.32259893, y: 0.6788764}
+  m_Size: {x: 0.32, y: 0.84}
   m_EdgeRadius: 0
 --- !u!50 &7321501536140284911
 Rigidbody2D:
@@ -212,6 +212,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 300
+  canAttack: 0
+  damage: 0
+  coolDownAttack: 0
+  attackTimer: 0
 --- !u!95 &7321501536140284908
 Animator:
   serializedVersion: 5
@@ -290,7 +294,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.416759, y: 1.0372202}
+  m_Size: {x: 0.5, y: 1.0372202}
   m_EdgeRadius: 0
 --- !u!114 &7321501537460600806
 MonoBehaviour:

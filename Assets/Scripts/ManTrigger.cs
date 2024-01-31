@@ -14,7 +14,6 @@ public class ManTrigger : MonoBehaviour
             if (!man.canAttack)
             {
                 man.Ran(collision.transform);
-                man.Attack();
             }
         }
     }
@@ -23,18 +22,33 @@ public class ManTrigger : MonoBehaviour
     {
         if(collision.tag == "Tail")
         {
-            if(man.canAttack)
+            if (man.canAttack)
             {
-                man.Attack();
+                RaycastHit2D[] hits = Physics2D.RaycastAll((Vector2)transform.position,(Vector2)collision.transform.position,Vector2.Distance((Vector2)transform.position, (Vector2)collision.transform.position));
+
+                for (int i = 0; i < hits.Length; i++)
+                {
+                    if (hits[i].collider.tag == "Wall")
+                    {
+                        return;
+                    }
+                }
+
+                man.Attack(collision.transform);
             }
         }
     }
+
+
 
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.tag == "Lion")
         {
             man.Safe();
+        }else if(collision.tag == "Tail")
+        {
+            man.Attack(null);
         }
     }
 

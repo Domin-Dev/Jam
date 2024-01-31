@@ -12,8 +12,12 @@ public class LionTrigger : MonoBehaviour
         }
         else if(collision.tag == "Food")
         {
+            Blood.Instance.MakeBlood(collision.transform.position);
+            SoundsManager.soundsManager.Cheer();
             Destroy(collision.gameObject);
             Player.instance.AddTail();
+            Player.instance.AddScore();
+            Player.instance.UpdateKills();
         }
     }
 }

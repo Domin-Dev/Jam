@@ -8,7 +8,7 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] Slider hpBar;
     [SerializeField] Slider SprintBar;
-    [SerializeField] int food;
+
 
     public static UIManager Instance;
     private void Awake()
@@ -23,10 +23,7 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    private void Start()
-    {
-       food =  GameObject.FindGameObjectsWithTag("Food").Length;
-    }
+ 
 
     public void UpdateSprintBar(float value)
     {
@@ -35,6 +32,6 @@ public class UIManager : MonoBehaviour
 
     public void UpdateHPBar(float value)
     {
-    //    hpBar.value = value;
+        hpBar.value = value;
     }
 }

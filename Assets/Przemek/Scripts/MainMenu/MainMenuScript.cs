@@ -18,7 +18,11 @@ public class MainMenuScript : MonoBehaviour
     {
         
     }
-    public void ButtonAction_StartGame() {
+    public void ButtonAction_StartGame()
+    {
+        //Reset wszystkich wartosci:
+        SaveManager.ResetValues();
+
         SceneManager.LoadScene(newSceneName);
     }
     public void ButtonAction_ShowScores() { }

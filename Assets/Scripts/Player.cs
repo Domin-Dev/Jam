@@ -1,6 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 public class Player : MonoBehaviour
 {
     Camera camera;
-
+    [SerializeField] int food;
 
     [SerializeField] private float currentHp;
     [SerializeField] private float maxHp;
@@ -37,6 +37,8 @@ public class Player : MonoBehaviour
 
     [SerializeField] private Sprite spriteBody;
 
+    Transform couter;
+
     // List<Transform> tail;
 
     static public Player instance;
@@ -55,6 +57,8 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
+        couter = GameObject.FindGameObjectWithTag("Counter").transform;
+        couter.GetComponent<TextMeshProUGUI>().text = SaveManager.FindInstance.Get_CurrentScores().ToString();
         camera = Camera.main.GetComponent<Camera>();
         Transform t = Instantiate(parts[0], Vector3.zero, Quaternion.identity).AddComponent<MarkerManager>().transform;
         sortingOrder = t.GetChild(0).GetComponent<SpriteRenderer>().sortingOrder;
@@ -63,10 +67,20 @@ public class Player : MonoBehaviour
         currentDistance = distance;
         isSprint = false;
         currentSprintTime = maxSprintTime;
+        currentHp = maxHp;
         timer1 = 0;
+        food = GameObject.FindGameObjectsWithTag("Food").Length;
     }
 
-
+    public void Damage(float damage)
+    {
+        currentHp = currentHp - damage;
+        if(currentHp <= 0)
+        {
+            LionHitTail();
+        }
+        UIManager.Instance.UpdateHPBar(currentHp / maxHp);
+    }
 
     [SerializeField] private float timer;
 
@@ -104,7 +118,7 @@ public class Player : MonoBehaviour
         {
             if (currentSprintTime > 0)
             {
-                currentSpeed = 1.45f * speed;
+                currentSpeed = 1.6f * speed;
                 isSprint = true;
             }
             // currentDistance = 0.5f * distance;
@@ -121,7 +135,7 @@ public class Player : MonoBehaviour
         // if(Input.GetAxis("Mouse X") != 0)
         // {
         //  Debug.Log(Input.GetAxis("Mouse X"));
-        //}
+        //}v
 
         if (Input.GetAxis("Horizontal") != 0)
         {
@@ -139,13 +153,35 @@ public class Player : MonoBehaviour
 
     public void LionHitTail()
     {
-         SceneManager.LoadScene(0);
+        Time.timeScale = 0;
+        UiManager.FindInstance.enabled = false;
+        UiManager.FindInstance.gameOverPanel.ShowPanel();
     }
 
     public void AddTail()
     {
         count++;
+        count++;
         body[body.Count - 1].GetComponent<MarkerManager>().ClearList();
+    }
+
+    public void UpdateKills()
+    {
+        food--;    
+        if( food <= 0)
+        {
+            Time.timeScale = 0;
+            this.enabled = false;
+            if (SaveManager.FindInstance.IsNexLevel()) UiManager.FindInstance.successLevelInfoPanel.ShowPanel();
+            else UiManager.FindInstance.gameOverPanel.ShowPanel();
+
+        }
+    }
+    public void AddScore()
+    {
+        SaveManager.FindInstance.Add_CurrentScores(1);
+        UiManager.FindInstance.IncreaseTime();
+        couter.GetComponent<TextMeshProUGUI>().text = SaveManager.FindInstance.Get_CurrentScores().ToString();
     }
     private void MakePart()
     {
@@ -188,12 +224,18 @@ public class Player : MonoBehaviour
     private void FixedUpdate()
     {
 
-        body[0].GetComponent<Rigidbody2D>().velocity = body[0].transform.right * -currentSpeed * 10f * Time.deltaTime;
+        body[0].GetComponent<Rigidbody2D>().velocity = body[0].transform.right * -currentSpeed * 10f * Time.fixedDeltaTime;
 
         for (int i = 0; i < body.Count; i++)
         {
-
-            body[i].GetComponent<MarkerManager>().UpdateMarkers();
+            if (i == body.Count - 1 && body[i].GetComponent<MarkerManager>().markers.Count < 10)
+            {
+                body[i].GetComponent<MarkerManager>().UpdateMarkers();
+            }
+            else if (i != body.Count -1)
+            {
+                body[i].GetComponent<MarkerManager>().UpdateMarkers();
+            }
         }
 
         MakePart();
@@ -212,7 +254,6 @@ public class Player : MonoBehaviour
                     }
                     else if(markerManager.markers.Count > 1)
                     {
-                        Debug.Log(markerManager.markers[1].rotation + " " + markerManager.markers[1].position);
                         body[i].transform.position = markerManager.markers[1].position;
                         body[i].transform.rotation = markerManager.markers[1].rotation;
                         markerManager.markers.RemoveAt(0);
